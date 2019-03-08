@@ -7,68 +7,44 @@ import (
 	"runtime"
 
 	"github.com/go-gl/gl/v2.1/gl"
-	"github.com/go-gl/glfw/v3.2/glfw"
+
+	"BwInf37_runde2/OpenGL_lib/window"
 )
 
 var (
 	windowWidht  = 800
 	windowHeight = 600
-	title        = "OpenGl-Window"
-	fullscreen   = false
+	title        = "OpenGL-Window"
+	fullscreen   = true
 )
 
 func main() {
+	/*prog := gl.CreateProgram()
+	gl.LinkProgram(prog)
+	return prog*/
+
 	initLog()
 	log.Println("Starting up..")
 	runtime.LockOSThread()
 
-	window := initWindow()
+	window.Create(windowWidht, windowHeight, fullscreen, title, false)
 	log.Println("Initialized window.")
-	defer glfw.Terminate()
 
-	initOpenGL()
-	log.Println("Initialized OpenGL.")
+	//initOpenGL()
+	//log.Println("Initialized OpenGL.")
 
 	log.Println("Starting window-loop...")
-	for !window.ShouldClose() {
+	for !window.CloseRequested() {
 
-		window.SwapBuffers()
-		glfw.PollEvents()
+		window.Update()
 	}
 	log.Println("Window closed.")
 	log.Print("Stopping program... \n\n\n")
 }
 
-func initWindow() *glfw.Window {
-	check(glfw.Init())
-
-	glfw.WindowHint(glfw.Resizable, glfw.False)
-	glfw.WindowHint(glfw.ContextVersionMajor, 4)
-	glfw.WindowHint(glfw.ContextVersionMinor, 1)
-	glfw.WindowHint(glfw.OpenGLProfile, glfw.OpenGLCoreProfile)
-	glfw.WindowHint(glfw.OpenGLForwardCompatible, glfw.True)
-
-	window, err := glfw.CreateWindow(windowWidht, windowHeight, title, nil, nil)
-	check(err)
-	if fullscreen {
-		monitor := glfw.GetPrimaryMonitor()
-		vmode := monitor.GetVideoMode()
-		window.SetMonitor(monitor, 0, 0, vmode.Width, vmode.Height, 40)
-	}
-	window.MakeContextCurrent()
-
-	log.Println("Window-size:", windowWidht, "x", windowHeight, " Fullscreen:", fullscreen)
-
-	return window
-}
-
-func initOpenGL() uint32 {
+func initOpenGL() {
 	check(gl.Init())
 	log.Println("OpenGL version:", gl.GoStr(gl.GetString(gl.VERSION)))
-
-	prog := gl.CreateProgram()
-	gl.LinkProgram(prog)
-	return prog
 }
 
 func initLog() {
