@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-gl/gl/v2.1/gl"
 
-	"BwInf37_runde2/OpenGL_lib/files"
+	"BwInf37_runde2/OpenGL_lib/graphics"
 	"BwInf37_runde2/OpenGL_lib/window"
 )
 
@@ -33,8 +33,7 @@ func main() {
 	/*prog := gl.CreateProgram()
 	gl.LinkProgram(prog)
 	return prog*/
-	files.LoadShader("./res/GuiShader.glsl", gl.FRAGMENT_SHADER)
-	files.LoadShader("./res/GuiShader.glsl", gl.VERTEX_SHADER)
+	graphics.NewShaderProgram("./res/GuiShader.glsl")
 
 	log.Println("Starting window-loop...")
 	for !window.CloseRequested() {

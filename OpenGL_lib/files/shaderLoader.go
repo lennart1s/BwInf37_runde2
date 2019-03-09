@@ -39,7 +39,7 @@ func LoadShader(path string, shaderType uint32) uint32 {
 	} else if shaderType == gl.FRAGMENT_SHADER {
 		log.Println("Compiling fragment-shader:", path)
 	}
-	err, info := compileShader(id)
+	info, err := compileShader(id)
 	if err != nil {
 		log.Println(err)
 		log.Fatal(info)
@@ -48,7 +48,7 @@ func LoadShader(path string, shaderType uint32) uint32 {
 	return id
 }
 
-func compileShader(id uint32) (error, string) {
+func compileShader(id uint32) (string, error) {
 	gl.CompileShader(id)
 	var status int32
 	gl.GetShaderiv(id, gl.COMPILE_STATUS, &status)
@@ -57,8 +57,8 @@ func compileShader(id uint32) (error, string) {
 		gl.GetShaderiv(id, gl.INFO_LOG_LENGTH, &logLength)
 		infoLog := strings.Repeat("\x00", int(logLength+1))
 		gl.GetShaderInfoLog(id, logLength, nil, gl.Str(infoLog))
-		return errors.New("Could not compile shader"), infoLog
+		return infoLog, errors.New("Could not compile shader")
 	}
 
-	return nil, ""
+	return "", nil
 }
