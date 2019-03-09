@@ -8,6 +8,7 @@ import (
 
 	"github.com/go-gl/gl/v2.1/gl"
 
+	"BwInf37_runde2/OpenGL_lib/files"
 	"BwInf37_runde2/OpenGL_lib/window"
 )
 
@@ -15,14 +16,10 @@ var (
 	windowWidht  = 800
 	windowHeight = 600
 	title        = "OpenGL-Window"
-	fullscreen   = true
+	fullscreen   = false
 )
 
 func main() {
-	/*prog := gl.CreateProgram()
-	gl.LinkProgram(prog)
-	return prog*/
-
 	initLog()
 	log.Println("Starting up..")
 	runtime.LockOSThread()
@@ -30,8 +27,14 @@ func main() {
 	window.Create(windowWidht, windowHeight, fullscreen, title, false)
 	log.Println("Initialized window.")
 
-	//initOpenGL()
-	//log.Println("Initialized OpenGL.")
+	initOpenGL()
+	log.Println("Initialized OpenGL.")
+
+	/*prog := gl.CreateProgram()
+	gl.LinkProgram(prog)
+	return prog*/
+	files.LoadShader("./res/GuiShader.glsl", gl.FRAGMENT_SHADER)
+	files.LoadShader("./res/GuiShader.glsl", gl.VERTEX_SHADER)
 
 	log.Println("Starting window-loop...")
 	for !window.CloseRequested() {
