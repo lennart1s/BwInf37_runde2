@@ -1,20 +1,20 @@
 package file
 
 import (
-	"BwInf37_runde2/lisa_rennt/rendering"
+	"BwInf37_runde2/lisa_rennt/lib"
 	"io/ioutil"
 	"strconv"
 	"strings"
 )
 
-func Read(path string) ([]*rendering.Polygon, rendering.Vertex) {
-	var obstacles []*rendering.Polygon
-	var home rendering.Vertex
+func Read(path string) ([]*lib.Polygon, lib.Vertex) {
+	var obstacles []*lib.Polygon
+	var home lib.Vertex
 
 	lines := loadLines(path)
 	numPolygons, err := strconv.Atoi(lines[0])
 	for _, line := range lines[1 : 1+numPolygons] {
-		obstacles = append(obstacles, rendering.PolygonFromLine(line))
+		obstacles = append(obstacles, lib.PolygonFromLine(line))
 	}
 
 	homeParts := strings.Split(lines[len(lines)-1], " ")
@@ -23,7 +23,7 @@ func Read(path string) ([]*rendering.Polygon, rendering.Vertex) {
 
 	if err != nil {
 		panic("Invalid data in file: " + path)
-		return nil, rendering.Vertex{}
+		return nil, lib.Vertex{}
 	}
 
 	return obstacles, home

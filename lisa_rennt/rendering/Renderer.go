@@ -1,13 +1,14 @@
 package rendering
 
 import (
+	"BwInf37_runde2/lisa_rennt/lib"
 	"image/color"
 	"math"
 
 	"github.com/llgcode/draw2d/draw2dimg"
 )
 
-func RenderObstacles(gc *draw2dimg.GraphicContext, polygons ...*Polygon) {
+func RenderObstacles(gc *draw2dimg.GraphicContext, polygons ...*lib.Polygon) {
 	gc.SetFillColor(OBSTACLE_FILL)
 	gc.SetStrokeColor(OBSTACLE_OUTLINE)
 	gc.SetLineWidth(OBSTACLE_STROKE)
@@ -27,10 +28,10 @@ func RenderBusStop(gc *draw2dimg.GraphicContext) {
 	gc.SetStrokeColor(BUSSTOP_OUTLINE)
 	gc.SetLineWidth(BUSSTOP_STROKE)
 
-	renderCircle(gc, Vertex{0, 0}, BUSSTOP_RADIUS)
+	renderCircle(gc, lib.Vertex{0, 0}, BUSSTOP_RADIUS)
 }
 
-func RenderHome(gc *draw2dimg.GraphicContext, v Vertex) {
+func RenderHome(gc *draw2dimg.GraphicContext, v lib.Vertex) {
 	gc.SetFillColor(HOME_FILL)
 	gc.SetLineWidth(0)
 
@@ -56,7 +57,7 @@ func RenderEnvironment(gc *draw2dimg.GraphicContext) {
 	RenderBusStop(gc)
 }
 
-func renderCircle(gc *draw2dimg.GraphicContext, center Vertex, radius float64) {
+func renderCircle(gc *draw2dimg.GraphicContext, center lib.Vertex, radius float64) {
 	for vi := 0.0; vi < float64(CIRCLE_VERTICES); vi++ {
 		x := center.X + math.Cos(vi*2.0*math.Pi/float64(CIRCLE_VERTICES))*radius
 		y := center.Y + math.Sin(vi*2.0*math.Pi/float64(CIRCLE_VERTICES))*radius
