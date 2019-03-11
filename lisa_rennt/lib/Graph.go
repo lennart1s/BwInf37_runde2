@@ -1,14 +1,16 @@
 package lib
 
 type Graph struct {
-	Nodes []Node
+	Nodes []*Node
 }
 
 type Node struct {
-	Vertex
+	X float64
+	Y float64
+
 	Id string
 
-	Edges []Edge
+	Edges []*Edge
 
 	ShortestPath   float64
 	ShortestParent *Node

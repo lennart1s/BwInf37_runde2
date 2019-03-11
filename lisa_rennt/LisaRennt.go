@@ -2,9 +2,9 @@ package main
 
 import (
 	"BwInf37_runde2/lisa_rennt/file"
+	"BwInf37_runde2/lisa_rennt/graph"
 	"BwInf37_runde2/lisa_rennt/lib"
 	"BwInf37_runde2/lisa_rennt/rendering"
-	"fmt"
 	"image"
 	"image/draw"
 	"image/png"
@@ -22,10 +22,6 @@ var (
 )
 
 func main() {
-	l1 := lib.Line{lib.Vertex{-5.88, -0.58}, lib.Vertex{0.6, 1.76}}
-	l2 := lib.Line{lib.Vertex{-7.96, -0.18}, lib.Vertex{0.5, -3.5}}
-	fmt.Println(lib.LineSegementIntersection(l1, l2))
-
 	// Setup
 	Img := image.NewRGBA(image.Rect(0, 0, rendering.WIDTH, rendering.HEIGHT))
 	draw.Draw(Img, Img.Bounds(), &image.Uniform{rendering.BACKGROUND}, image.ZP, draw.Src)
@@ -39,6 +35,8 @@ func main() {
 	rendering.RenderEnvironment(Gc)
 	rendering.RenderHome(Gc, Home)
 	rendering.RenderObstacles(Gc, Obstacles...)
+
+	g := graph.Create(Home, Obstacles)
 
 	f, _ := os.Create("./lisa_rennt/save.png")
 	png.Encode(f, Img)
