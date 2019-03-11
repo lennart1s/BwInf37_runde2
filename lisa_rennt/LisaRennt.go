@@ -12,25 +12,28 @@ import (
 )
 
 var (
+	Img *image.RGBA
+	Gc  *image.RGBA
+
 	Obstacles []*rendering.Polygon
 	Home      rendering.Vertex
 )
 
 func main() {
 	// Setup
-	img := image.NewRGBA(image.Rect(0, 0, rendering.WIDTH, rendering.HEIGHT))
-	draw.Draw(img, img.Bounds(), &image.Uniform{rendering.BACKGROUND}, image.ZP, draw.Src)
-	gc := draw2dimg.NewGraphicContext(img)
-	gc.Scale(1, -1)
-	gc.Translate(rendering.BUSSTOP_RADIUS*1.5, -(float64(rendering.HEIGHT) - rendering.BUSSTOP_RADIUS*1.5))
+	Img := image.NewRGBA(image.Rect(0, 0, rendering.WIDTH, rendering.HEIGHT))
+	draw.Draw(Img, Img.Bounds(), &image.Uniform{rendering.BACKGROUND}, image.ZP, draw.Src)
+	Gc := draw2dimg.NewGraphicContext(Img)
+	Gc.Scale(1, -1)
+	Gc.Translate(rendering.BUSSTOP_RADIUS*1.5, -(float64(rendering.HEIGHT) - rendering.BUSSTOP_RADIUS*1.5))
 
 	// Read-File
 	Obstacles, Home = file.Read("./lisa_rennt/examples/lisarennt5.txt")
 
-	rendering.RenderEnvironment(gc)
-	rendering.RenderHome(gc, Home)
-	rendering.RenderObstacles(gc, Obstacles...)
+	rendering.RenderEnvironment(Gc)
+	rendering.RenderHome(Gc, Home)
+	rendering.RenderObstacles(Gc, Obstacles...)
 
 	f, _ := os.Create("./lisa_rennt/save.png")
-	png.Encode(f, img)
+	png.Encode(f, Img)
 }
