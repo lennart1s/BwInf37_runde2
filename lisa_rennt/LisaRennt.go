@@ -30,13 +30,14 @@ func main() {
 	Gc.Translate(rendering.BUSSTOP_RADIUS*1.5, -(float64(rendering.HEIGHT) - rendering.BUSSTOP_RADIUS*1.5))
 
 	// Read-File
-	Obstacles, Home = file.Read("./lisa_rennt/examples/lisarennt5.txt")
+	Obstacles, Home = file.Read("./lisa_rennt/examples/lisarennt2.txt")
 
 	rendering.RenderEnvironment(Gc)
 	rendering.RenderHome(Gc, Home)
 	rendering.RenderObstacles(Gc, Obstacles...)
 
 	g := graph.Create(Home, Obstacles)
+	rendering.RenderGraph(Gc, &g)
 
 	f, _ := os.Create("./lisa_rennt/save.png")
 	png.Encode(f, Img)

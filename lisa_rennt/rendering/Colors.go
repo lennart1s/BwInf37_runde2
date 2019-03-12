@@ -12,4 +12,6 @@ var (
 	BUSSTOP_OUTLINE = color.RGBA{30, 200, 60, 255}
 
 	HOME_FILL = color.RGBA{200, 20, 20, 255}
+
+	GRAPH = color.RGBA{140, 25, 125, 255}
 )
