@@ -8,7 +8,7 @@ import (
 
 func Create(home lib.Vertex, polygons []*lib.Polygon) lib.Graph {
 	g := lib.Graph{}
-	g.Nodes = append(g.Nodes, &lib.Node{X: home.X, Y: home.Y, Id: "start"})
+	g.Nodes = append(g.Nodes, &lib.Node{X: home.X, Y: home.Y, ID: "start"})
 	g.Nodes = append(g.Nodes, verticesToNodes(polygons)...)
 
 	var borders []*lib.Line
@@ -16,15 +16,12 @@ func Create(home lib.Vertex, polygons []*lib.Polygon) lib.Graph {
 
 	for _, n := range g.Nodes {
 		for _, o := range g.Nodes {
-			/*if canReach(n, o, polygons) {
-				n.Edges = append(n.Edges, &lib.Edge{Node: o, Weight: distance(n, o)})
-			}*/
 			if !belongToSamePolygon(n, o) {
 				if canReach(n, o, borders) {
 					n.Edges = append(n.Edges, &lib.Edge{Node: o, Weight: distance(n, o)})
 				}
 			} else {
-				pi, _ := strconv.Atoi(n.Id)
+				pi, _ := strconv.Atoi(n.ID)
 				if canReach(n, o, borders) && canReachP(n, o, polygons[pi].Vertices) {
 					n.Edges = append(n.Edges, &lib.Edge{Node: o, Weight: distance(n, o)})
 				}
@@ -81,6 +78,9 @@ func canReach(n *lib.Node, o *lib.Node, borders []*lib.Line) bool {
 func canReachP(n *lib.Node, o *lib.Node, vertices []lib.Vertex) bool {
 	ray := lib.Vertex{X: o.X - n.X, Y: o.Y - n.Y}
 	s := 0
+	if areNeightbors(n, o, vertices) {
+		return true
+	}
 	for _, v := range vertices {
 		translV := lib.Vertex{X: v.X - n.X, Y: v.Y - n.Y}
 		dp := dotProd(ray, translV)
@@ -99,12 +99,26 @@ func distance(n *lib.Node, o *lib.Node) float64 {
 }
 
 func belongToSamePolygon(n *lib.Node, o *lib.Node) bool {
-	return n.Id == o.Id
+	return n.ID == o.ID
 }
 
 func segmentsHaveCommandPoint(l1 *lib.Line, l2 *lib.Line) bool {
 	return l1.A == l2.A || l1.A == l2.B ||
 		l1.B == l2.A || l1.B == l2.B
+}
+
+func areNeightbors(n *lib.Node, o *lib.Node, vertices []lib.Vertex) bool {
+	for vi, v := range vertices {
+		if (v.X == n.X && v.Y == n.Y) || (v.X == o.X && v.Y == o.Y) {
+			j := vi + 1
+			if j >= len(vertices) {
+				j = 0
+			}
+			return (vertices[j].X == n.X && vertices[j].Y == n.Y) || (vertices[j].X == o.X && vertices[j].Y == o.Y)
+		}
+	}
+
+	return false
 }
 
 func getAllLines(polygons []*lib.Polygon) []*lib.Line {
@@ -128,7 +142,7 @@ func verticesToNodes(polygons []*lib.Polygon) []*lib.Node {
 	for ip, p := range polygons {
 		for _, v := range p.Vertices {
 			id := strconv.Itoa(ip)
-			nodes = append(nodes, &lib.Node{X: v.X, Y: v.Y, Id: id})
+			nodes = append(nodes, &lib.Node{X: v.X, Y: v.Y, ID: id})
 		}
 	}
 

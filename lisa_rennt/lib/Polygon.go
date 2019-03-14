@@ -30,3 +30,22 @@ func PolygonFromLine(line string) *Polygon {
 
 	return &p
 }
+
+func (p *Polygon) IsClockwise() bool {
+	a := 0.0
+	for i := 0; i < len(p.Vertices)-1; i++ {
+		a += p.Vertices[i].X*p.Vertices[i+1].Y - p.Vertices[i+1].X*p.Vertices[i].Y
+	}
+	a *= 0.5
+
+	return a < 0
+}
+
+func (p *Polygon) ArrangeClockwise() {
+	if !p.IsClockwise() {
+		verts := len(p.Vertices)
+		for i := 0; i < verts/2; i++ {
+			p.Vertices[i], p.Vertices[verts-i-1] = p.Vertices[verts-i-1], p.Vertices[i]
+		}
+	}
+}

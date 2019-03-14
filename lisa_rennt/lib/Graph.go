@@ -8,7 +8,7 @@ type Node struct {
 	X float64
 	Y float64
 
-	Id string
+	ID string
 
 	Edges []*Edge
 
@@ -18,5 +18,8 @@ type Node struct {
 
 type Edge struct {
 	*Node
+
+	ID string
+
 	Weight float64
 }
