@@ -7,6 +7,10 @@ import (
 )
 
 func Create(home lib.Vertex, polygons []*lib.Polygon) lib.Graph {
+	for _, p := range polygons {
+		p.ArrangeClockwise()
+	}
+
 	g := lib.Graph{}
 	g.Nodes = append(g.Nodes, &lib.Node{X: home.X, Y: home.Y, ID: "start"})
 	g.Nodes = append(g.Nodes, verticesToNodes(polygons)...)
@@ -16,13 +20,16 @@ func Create(home lib.Vertex, polygons []*lib.Polygon) lib.Graph {
 
 	for _, n := range g.Nodes {
 		for _, o := range g.Nodes {
+			if n == o {
+				continue
+			}
 			if !belongToSamePolygon(n, o) {
 				if canReach(n, o, borders) {
 					n.Edges = append(n.Edges, &lib.Edge{Node: o, Weight: distance(n, o)})
 				}
 			} else {
 				pi, _ := strconv.Atoi(n.ID)
-				if canReach(n, o, borders) && canReachP(n, o, polygons[pi].Vertices) {
+				if canReach(n, o, borders) && canReachP(n, o, polygons[pi]) {
 					n.Edges = append(n.Edges, &lib.Edge{Node: o, Weight: distance(n, o)})
 				}
 			}
@@ -31,33 +38,6 @@ func Create(home lib.Vertex, polygons []*lib.Polygon) lib.Graph {
 
 	return g
 }
-
-/*func canReach(n *lib.Node, o *lib.Node, polygons []*lib.Polygon) bool {
-	ray := lib.Vertex{X: o.X - n.X, Y: o.Y - n.Y}
-	a := -math.Atan(ray.Y / ray.X)
-	rotRay := rotateVector(ray, a)
-
-	for _, p := range polygons {
-		s := 0
-		for _, v := range p.Vertices {
-			transfV := rotateVector(lib.Vertex{X: v.X - n.X, Y: v.Y - n.Y}, a)
-			if s == 0 {
-				s = sign(transfV.Y)
-			} else if s != sign(transfV.Y) {
-				if sign(rotRay.X) == sign(transfV.X) && math.Abs(transfV.X) < math.Abs(rotRay.X) {
-					return false
-				}
-				npi, _ := strconv.Atoi(n.Id)
-				opi, _ := strconv.Atoi(o.Id)
-				if pi == npi && pi == opi {
-					return false
-				}
-			}
-		}
-	}
-
-	return true
-}*/
 
 func canReach(n *lib.Node, o *lib.Node, borders []*lib.Line) bool {
 	ray := lib.Line{A: lib.Vertex{X: n.X, Y: n.Y}, B: lib.Vertex{X: o.X, Y: o.Y}}
@@ -75,23 +55,40 @@ func canReach(n *lib.Node, o *lib.Node, borders []*lib.Line) bool {
 	return true
 }
 
-func canReachP(n *lib.Node, o *lib.Node, vertices []lib.Vertex) bool {
-	ray := lib.Vertex{X: o.X - n.X, Y: o.Y - n.Y}
-	s := 0
-	if areNeightbors(n, o, vertices) {
+func canReachP(n *lib.Node, o *lib.Node, p *lib.Polygon) bool {
+	canReach := false
+
+	var prevV lib.Vertex
+	f := func(v *lib.Vertex) bool {
+		transl := lib.Vertex{X: v.X - n.X, Y: v.Y - n.Y}
+		dp := dotProd(prevV, transl)
+		prevV = transl
+		if dp < 0 {
+			return true
+		} else if v.X == o.X && v.Y == o.Y {
+			canReach = true
+			return true
+		}
+		return false
+	}
+	f2 := func(v *lib.Vertex) bool {
+		transl := lib.Vertex{X: v.X - n.X, Y: v.Y - n.Y}
+		dp := dotProd(prevV, transl)
+		prevV = transl
+		if dp > 0 {
+			return true
+		} else if v.X == o.X && v.Y == o.Y {
+			canReach = true
+			return true
+		}
+		return false
+	}
+	p.ForAllVertices(lib.Vertex{X: n.X, Y: n.Y}, false, f)
+	if canReach {
 		return true
 	}
-	for _, v := range vertices {
-		translV := lib.Vertex{X: v.X - n.X, Y: v.Y - n.Y}
-		dp := dotProd(ray, translV)
-		if s == 0 {
-			s = sign(dp)
-		} else if sign(dp) != 0 && s != sign(dp) {
-			return false
-		}
-	}
-
-	return true
+	p.ForAllVertices(lib.Vertex{X: n.X, Y: n.Y}, true, f2)
+	return canReach
 }
 
 func distance(n *lib.Node, o *lib.Node) float64 {

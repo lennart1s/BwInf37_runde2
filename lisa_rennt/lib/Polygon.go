@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -49,3 +50,40 @@ func (p *Polygon) ArrangeClockwise() {
 		}
 	}
 }
+
+func (p *Polygon) ForAllVertices(startV Vertex, itBw bool, itF iterationFunc) {
+	i := 0
+	for {
+		if p.Vertices[i].X == startV.X && p.Vertices[i].Y == startV.Y {
+			break
+		}
+		i++
+		if i == len(p.Vertices) {
+			println("Start-vertex not found.")
+			fmt.Println(startV)
+			fmt.Println(p.Vertices)
+			return
+		}
+	}
+	step := 1
+	if itBw {
+		step = -1
+	}
+	first := false
+	for !first || !(p.Vertices[i].X == startV.X && p.Vertices[i].Y == startV.Y) {
+		first = true
+		if itF(&p.Vertices[i]) {
+			break
+		}
+
+		i += step
+		if i >= len(p.Vertices) {
+			i = 0
+		} else if i < 0 {
+			i = len(p.Vertices) - 1
+		}
+	}
+
+}
+
+type iterationFunc = func(v *Vertex) bool
