@@ -11,9 +11,9 @@ func LineSegementIntersection(u *Line, v *Line) bool {
 }
 
 func isSegmentLineCollision(line *Line, segment *Line) bool {
-	transLine := Line{Vertex{}, Vertex{line.B.X - line.A.X, line.B.Y - line.A.Y}}
+	transLine := Line{Vertex{}, Vertex{line.B.X - line.A.X, line.B.Y - line.A.Y}, nil}
 	transSegment := Line{Vertex{segment.A.X - line.A.X, segment.A.Y - line.A.Y},
-		Vertex{segment.B.X - line.A.X, segment.B.Y - line.A.Y}}
+		Vertex{segment.B.X - line.A.X, segment.B.Y - line.A.Y}, nil}
 	dA := dotProd(transLine.B, transSegment.A)
 	dB := dotProd(transLine.B, transSegment.B)
 

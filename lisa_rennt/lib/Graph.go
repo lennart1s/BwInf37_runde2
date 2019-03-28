@@ -5,10 +5,9 @@ type Graph struct {
 }
 
 type Node struct {
-	X float64
-	Y float64
+	*Vertex
 
-	ID string
+	Info map[string]string
 
 	Edges []*Edge
 
@@ -19,7 +18,7 @@ type Node struct {
 type Edge struct {
 	*Node
 
-	ID string
+	Info map[string]string
 
 	Weight float64
 }

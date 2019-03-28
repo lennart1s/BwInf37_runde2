@@ -6,17 +6,24 @@ import (
 	"strconv"
 )
 
+const (
+	lisaVel_KMH = 15.0
+	busVel_KMH  = 30.0
+)
+
 func Create(home lib.Vertex, polygons []*lib.Polygon) lib.Graph {
 	for _, p := range polygons {
 		p.ArrangeClockwise()
 	}
 
 	g := lib.Graph{}
-	g.Nodes = append(g.Nodes, &lib.Node{X: home.X, Y: home.Y, ID: "start"})
+	g.Nodes = append(g.Nodes, &lib.Node{Vertex: &lib.Vertex{X: home.X, Y: home.Y}})
 	g.Nodes = append(g.Nodes, verticesToNodes(polygons)...)
 
 	var borders []*lib.Line
 	borders = append(borders, getAllLines(polygons)...)
+
+	idealAngle := math.Atan(lisaVel_KMH / math.Sqrt(math.Pow(busVel_KMH, 2)-math.Pow(lisaVel_KMH, 2)))
 
 	for _, n := range g.Nodes {
 		for _, o := range g.Nodes {
@@ -28,11 +35,17 @@ func Create(home lib.Vertex, polygons []*lib.Polygon) lib.Graph {
 					n.Edges = append(n.Edges, &lib.Edge{Node: o, Weight: distance(n, o)})
 				}
 			} else {
-				pi, _ := strconv.Atoi(n.ID)
+				pi, _ := strconv.Atoi(n.Info["p"])
 				if canReach(n, o, borders) && canReachP(n, o, polygons[pi]) {
 					n.Edges = append(n.Edges, &lib.Edge{Node: o, Weight: distance(n, o)})
 				}
 			}
+		}
+		// check if can reach optimal busY
+		idealY := n.Y + math.Tan(idealAngle)*n.X
+		borderNode := lib.Node{Vertex: &lib.Vertex{X: 0, Y: idealY}}
+		if canReach(n, &borderNode, borders) {
+			n.Edges = append(n.Edges, &lib.Edge{Node: &borderNode, Weight: 0}) // TODO: add real weight
 		}
 	}
 
@@ -43,7 +56,7 @@ func canReach(n *lib.Node, o *lib.Node, borders []*lib.Line) bool {
 	ray := lib.Line{A: lib.Vertex{X: n.X, Y: n.Y}, B: lib.Vertex{X: o.X, Y: o.Y}}
 
 	for _, b := range borders {
-		if segmentsHaveCommandPoint(&ray, b) {
+		if isNodeOnLine(n, b) || isNodeOnLine(o, b) {
 			continue
 		}
 
@@ -87,6 +100,7 @@ func canReachP(n *lib.Node, o *lib.Node, p *lib.Polygon) bool {
 	if canReach {
 		return true
 	}
+	prevV = lib.Vertex{X: 0, Y: 0}
 	p.ForAllVertices(lib.Vertex{X: n.X, Y: n.Y}, true, f2)
 	return canReach
 }
@@ -96,12 +110,11 @@ func distance(n *lib.Node, o *lib.Node) float64 {
 }
 
 func belongToSamePolygon(n *lib.Node, o *lib.Node) bool {
-	return n.ID == o.ID
+	return n.Info["p"] == o.Info["p"]
 }
 
-func segmentsHaveCommandPoint(l1 *lib.Line, l2 *lib.Line) bool {
-	return l1.A == l2.A || l1.A == l2.B ||
-		l1.B == l2.A || l1.B == l2.B
+func isNodeOnLine(n *lib.Node, l *lib.Line) bool {
+	return n.Info["p"] == l.Info["p"] && (n.Info["v"] == l.Info["v1"] || n.Info["v"] == l.Info["v2"])
 }
 
 func areNeightbors(n *lib.Node, o *lib.Node, vertices []lib.Vertex) bool {
@@ -121,13 +134,14 @@ func areNeightbors(n *lib.Node, o *lib.Node, vertices []lib.Vertex) bool {
 func getAllLines(polygons []*lib.Polygon) []*lib.Line {
 	var lines []*lib.Line
 
-	for _, p := range polygons {
+	for ip, p := range polygons {
 		for i := 0; i < len(p.Vertices); i++ {
 			j := i + 1
 			if j >= len(p.Vertices) {
 				j = 0
 			}
-			lines = append(lines, &lib.Line{A: p.Vertices[i], B: p.Vertices[j]})
+			lines = append(lines, &lib.Line{A: p.Vertices[i], B: p.Vertices[j], Info: map[string]string{"p": strconv.Itoa(ip),
+				"v1": strconv.Itoa(i), "v2": strconv.Itoa(j)}})
 		}
 	}
 
@@ -137,9 +151,8 @@ func getAllLines(polygons []*lib.Polygon) []*lib.Line {
 func verticesToNodes(polygons []*lib.Polygon) []*lib.Node {
 	var nodes []*lib.Node
 	for ip, p := range polygons {
-		for _, v := range p.Vertices {
-			id := strconv.Itoa(ip)
-			nodes = append(nodes, &lib.Node{X: v.X, Y: v.Y, ID: id})
+		for iv, _ := range p.Vertices {
+			nodes = append(nodes, &lib.Node{Vertex: &polygons[ip].Vertices[iv], Info: map[string]string{"p": strconv.Itoa(ip), "v": strconv.Itoa(iv)}})
 		}
 	}
 

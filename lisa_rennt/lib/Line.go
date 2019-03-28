@@ -3,6 +3,8 @@ package lib
 type Line struct {
 	A Vertex
 	B Vertex
+
+	Info map[string]string
 }
 
 /*func (l *Line) SortForX() {
