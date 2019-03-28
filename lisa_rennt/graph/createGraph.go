@@ -41,7 +41,7 @@ func Create(home lib.Vertex, polygons []*lib.Polygon) lib.Graph {
 				}
 			}
 		}
-		// check if can reach optimal busY
+		// Check if can reach optimal busY
 		idealY := n.Y + math.Tan(idealAngle)*n.X
 		borderNode := lib.Node{Vertex: &lib.Vertex{X: 0, Y: idealY}}
 		if canReach(n, &borderNode, borders) {
