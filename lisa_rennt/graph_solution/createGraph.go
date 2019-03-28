@@ -1,4 +1,4 @@
-package graph
+package graph_solution
 
 import (
 	"BwInf37_runde2/lisa_rennt/lib"
@@ -8,7 +8,9 @@ import (
 
 const (
 	lisaVel_KMH = 15.0
+	lisaVel     = lisaVel_KMH / 3.6
 	busVel_KMH  = 30.0
+	busVel      = busVel_KMH / 3.6
 )
 
 func Create(home lib.Vertex, polygons []*lib.Polygon) lib.Graph {
@@ -17,8 +19,10 @@ func Create(home lib.Vertex, polygons []*lib.Polygon) lib.Graph {
 	}
 
 	g := lib.Graph{}
-	g.Nodes = append(g.Nodes, &lib.Node{Vertex: &lib.Vertex{X: home.X, Y: home.Y}})
+	g.Nodes = append(g.Nodes, &lib.Node{Vertex: &lib.Vertex{X: home.X, Y: home.Y}, Info: map[string]string{"Type": "start"}})
 	g.Nodes = append(g.Nodes, verticesToNodes(polygons)...)
+
+	var endNodes []*lib.Node
 
 	var borders []*lib.Line
 	borders = append(borders, getAllLines(polygons)...)
@@ -32,22 +36,25 @@ func Create(home lib.Vertex, polygons []*lib.Polygon) lib.Graph {
 			}
 			if !belongToSamePolygon(n, o) {
 				if canReach(n, o, borders) {
-					n.Edges = append(n.Edges, &lib.Edge{Node: o, Weight: distance(n, o)})
+					n.Edges = append(n.Edges, &lib.Edge{Node: o, Weight: distance(n, o) / lisaVel})
 				}
 			} else {
 				pi, _ := strconv.Atoi(n.Info["p"])
 				if canReach(n, o, borders) && canReachP(n, o, polygons[pi]) {
-					n.Edges = append(n.Edges, &lib.Edge{Node: o, Weight: distance(n, o)})
+					n.Edges = append(n.Edges, &lib.Edge{Node: o, Weight: distance(n, o) / lisaVel})
 				}
 			}
 		}
 		// Check if can reach optimal busY
 		idealY := n.Y + math.Tan(idealAngle)*n.X
-		borderNode := lib.Node{Vertex: &lib.Vertex{X: 0, Y: idealY}}
+		borderNode := lib.Node{Vertex: &lib.Vertex{X: 0, Y: idealY}, Info: map[string]string{"Type": "finish"}}
 		if canReach(n, &borderNode, borders) {
-			n.Edges = append(n.Edges, &lib.Edge{Node: &borderNode, Weight: 0}) // TODO: add real weight
+			n.Edges = append(n.Edges, &lib.Edge{Node: &borderNode, Weight: finalWeight(n, idealY)})
+			endNodes = append(endNodes, &borderNode)
 		}
 	}
+
+	g.Nodes = append(g.Nodes, endNodes...)
 
 	return g
 }
@@ -107,6 +114,10 @@ func canReachP(n *lib.Node, o *lib.Node, p *lib.Polygon) bool {
 
 func distance(n *lib.Node, o *lib.Node) float64 {
 	return math.Sqrt(math.Pow(n.X-o.X, 2) + math.Pow(n.Y-o.Y, 2))
+}
+
+func finalWeight(n *lib.Node, y float64) float64 {
+	return -(y/busVel - distance(n, &lib.Node{Vertex: &lib.Vertex{0, y}})/lisaVel)
 }
 
 func belongToSamePolygon(n *lib.Node, o *lib.Node) bool {

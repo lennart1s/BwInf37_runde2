@@ -14,4 +14,6 @@ var (
 	HOME_FILL = color.RGBA{200, 20, 20, 255}
 
 	GRAPH = color.RGBA{140, 25, 125, 255}
+
+	GRAPH_PATH = color.RGBA{20, 170, 50, 255}
 )

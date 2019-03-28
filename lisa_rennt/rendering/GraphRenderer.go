@@ -21,3 +21,20 @@ func RenderGraph(gc *draw2dimg.GraphicContext, g *lib.Graph) {
 	}
 
 }
+
+func RenderPath(gc *draw2dimg.GraphicContext, g *lib.Graph, n *lib.Node) {
+	gc.SetFillColor(GRAPH_PATH)
+	gc.SetStrokeColor(GRAPH_PATH)
+	gc.SetLineWidth(GRAPH_PATH_WIDTH)
+
+	gc.MoveTo(n.X, n.Y)
+	drawToParent(gc, n)
+	gc.Stroke()
+}
+
+func drawToParent(gc *draw2dimg.GraphicContext, n *lib.Node) {
+	if n.ShortestParent != nil {
+		gc.LineTo(n.ShortestParent.X, n.ShortestParent.Y)
+		drawToParent(gc, n.ShortestParent)
+	}
+}
