@@ -11,6 +11,7 @@ import (
 	"image/png"
 	"math"
 	"os"
+	"strconv"
 
 	"github.com/llgcode/draw2d/draw2dimg"
 )
@@ -32,7 +33,7 @@ func main() {
 	Gc.Translate(rendering.BUSSTOP_RADIUS*1.5, -(float64(rendering.HEIGHT) - rendering.BUSSTOP_RADIUS*1.5))
 
 	// Read-File
-	Obstacles, Home = file.Read("./lisa_rennt/examples/lisarennt3.txt")
+	Obstacles, Home = file.Read("./lisa_rennt/examples/lisarennt5.txt")
 
 	rendering.RenderEnvironment(Gc)
 	rendering.RenderHome(Gc, Home)
@@ -53,8 +54,8 @@ func main() {
 func testData(g *lib.Graph, f *lib.Node) {
 	dist := 0.0
 	n := f
-	for n != nil {
-		dist += math.Sqrt(math.Pow(f.X-f.ShortestParent.X, 2) + math.Pow(f.Y-f.ShortestParent.Y, 2))
+	for n.ShortestParent != nil {
+		dist += math.Sqrt(math.Pow(n.X-n.ShortestParent.X, 2) + math.Pow(n.Y-n.ShortestParent.Y, 2))
 		n = n.ShortestParent
 	}
 	fmt.Println("Distance:", dist, "m")
@@ -67,6 +68,30 @@ func testData(g *lib.Graph, f *lib.Node) {
 	busTime := f.Y / (30 / 3.6)
 	fmt.Println("Bus time:", busTime, "s")
 
-	startDelay := neededTime - busTime
+	startDelay := busTime - neededTime
 	fmt.Println("Start delay:", startDelay, "s")
+
+	startTime := millisToTime(7.5*60*60*1000 + int(startDelay*1000))
+	fmt.Println("Start time:", startTime)
+}
+
+func millisToTime(millis int) string {
+	hours := millis / (60 * 60 * 1000)
+	millis -= hours * 60 * 60 * 1000
+	mins := millis / (60 * 1000)
+	millis -= mins * (60 * 1000)
+	secs := millis / 1000
+	millis -= secs * 1000
+
+	time := toMinLength(hours, 2) + ":" + toMinLength(mins, 2) + ":" + toMinLength(secs, 2) + "." + toMinLength(millis, 3)
+
+	return time
+}
+
+func toMinLength(x int, l int) string {
+	var s string = strconv.Itoa(x)
+	for len(s) < l {
+		s = "0" + s
+	}
+	return s
 }
