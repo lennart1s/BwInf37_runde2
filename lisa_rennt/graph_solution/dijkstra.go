@@ -5,6 +5,20 @@ import (
 )
 
 func Dijkstra(g *lib.Graph) *lib.Node {
+	/*var minWeight float64 = math.MaxFloat64
+	for _, n := range g.Nodes {
+		for _, e := range n.Edges {
+			if e.Weight < minWeight {
+				minWeight = e.Weight
+			}
+		}
+	}
+	for _, n := range g.Nodes {
+		for _, e := range n.Edges {
+			e.Weight -= minWeight
+		}
+	}*/
+
 	var start *lib.Node
 	for _, n := range g.Nodes {
 		if n.Info["Type"] == "start" {
@@ -26,15 +40,14 @@ func Dijkstra(g *lib.Graph) *lib.Node {
 				nIndex = i
 			}
 		}
+		if n.Info["Type"] == "finish" {
+			return n
+		}
 
 		for _, e := range n.Edges {
 			if e.Node.ShortestPath == -1 || n.ShortestPath+e.Weight < e.Node.ShortestPath {
 				e.ShortestParent = n
 				e.ShortestPath = n.ShortestPath + e.Weight
-				if e.Node.Info["Type"] == "finish" {
-					println(e.ShortestPath)
-					return e.Node
-				}
 				toGo = append(toGo, e.Node)
 			}
 		}
@@ -45,6 +58,5 @@ func Dijkstra(g *lib.Graph) *lib.Node {
 			println("no path found")
 			return nil
 		}
-
 	}
 }

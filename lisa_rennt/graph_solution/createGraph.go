@@ -36,12 +36,14 @@ func Create(home lib.Vertex, polygons []*lib.Polygon) lib.Graph {
 			}
 			if !belongToSamePolygon(n, o) {
 				if canReach(n, o, borders) {
-					n.Edges = append(n.Edges, &lib.Edge{Node: o, Weight: distance(n, o) / lisaVel})
+					e := &lib.Edge{Node: o, Weight: distance(n, o) / lisaVel}
+					n.Edges = append(n.Edges, e)
 				}
 			} else {
 				pi, _ := strconv.Atoi(n.Info["p"])
 				if canReach(n, o, borders) && canReachP(n, o, polygons[pi]) {
-					n.Edges = append(n.Edges, &lib.Edge{Node: o, Weight: distance(n, o) / lisaVel})
+					e := &lib.Edge{Node: o, Weight: distance(n, o) / lisaVel}
+					n.Edges = append(n.Edges, e)
 				}
 			}
 		}
