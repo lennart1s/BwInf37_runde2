@@ -2,10 +2,11 @@ package graph_solution
 
 import (
 	"BwInf37_runde2/lisa_rennt/lib"
+	"math"
 )
 
 func Dijkstra(g *lib.Graph) *lib.Node {
-	/*var minWeight float64 = math.MaxFloat64
+	minWeight := math.MaxFloat64
 	for _, n := range g.Nodes {
 		for _, e := range n.Edges {
 			if e.Weight < minWeight {
@@ -14,21 +15,52 @@ func Dijkstra(g *lib.Graph) *lib.Node {
 		}
 	}
 	for _, n := range g.Nodes {
-		for _, e := range n.Edges {
-			e.Weight -= minWeight
+		if n.Info["Type"] != "start" {
+			n.ShortestPath = math.MaxFloat64
 		}
-	}*/
+		/*for _, e := range n.Edges {
+			e.Weight -= minWeight
+		}*/
+	}
 
-	var start *lib.Node
-	for _, n := range g.Nodes {
-		if n.Info["Type"] == "start" {
-			start = n
-		} else {
-			n.ShortestPath = -1
+	q := g.Nodes
+	for len(q) > 0 {
+		var min *lib.Node
+		minI := 0
+		for i, n := range q {
+			if min == nil || n.ShortestPath < min.ShortestPath {
+				min = n
+				minI = i
+			}
+		}
+		if min.Info["Type"] == "finish" {
+			return min
+		}
+		q = append(q[:minI], q[minI+1:]...)
+
+		for _, e := range min.Edges {
+			for _, o := range q {
+				if e.Node == o {
+					if min.ShortestPath+e.Weight < e.ShortestPath {
+						e.ShortestPath = min.ShortestPath + e.Weight
+						e.ShortestParent = min
+					}
+					break
+				}
+			}
+
 		}
 	}
 
-	var toGo []*lib.Node
+	var min *lib.Node
+	for _, n := range g.Nodes {
+		if n.Info["Type"] == "finish" && (min == nil || n.ShortestPath < min.ShortestPath) {
+			min = n
+		}
+	}
+	return min
+
+	/*var toGo []*lib.Node
 	toGo = append(toGo, start)
 
 	for {
@@ -46,8 +78,8 @@ func Dijkstra(g *lib.Graph) *lib.Node {
 
 		for _, e := range n.Edges {
 			if e.Node.ShortestPath == -1 || n.ShortestPath+e.Weight < e.Node.ShortestPath {
-				e.ShortestParent = n
-				e.ShortestPath = n.ShortestPath + e.Weight
+				e.Node.ShortestParent = n
+				e.Node.ShortestPath = n.ShortestPath + e.Weight
 				toGo = append(toGo, e.Node)
 			}
 		}
@@ -58,5 +90,5 @@ func Dijkstra(g *lib.Graph) *lib.Node {
 			println("no path found")
 			return nil
 		}
-	}
+	}*/
 }
