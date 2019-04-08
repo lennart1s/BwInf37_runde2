@@ -18,8 +18,10 @@ func Dijkstra(g *lib.Graph) *lib.Node {
 		if n.Info["Type"] != "start" {
 			n.ShortestPath = math.MaxFloat64
 		}
-		/*for _, e := range n.Edges {
+		/*if minWeight < 0 {
+		for _, e := range n.Edges {
 			e.Weight -= minWeight
+		}
 		}*/
 	}
 
