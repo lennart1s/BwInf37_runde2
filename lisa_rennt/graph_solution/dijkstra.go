@@ -6,6 +6,8 @@ import (
 )
 
 func Dijkstra(g *lib.Graph) *lib.Node {
+	var finish *lib.Node
+
 	minWeight := math.MaxFloat64
 	for _, n := range g.Nodes {
 		for _, e := range n.Edges {
@@ -19,16 +21,15 @@ func Dijkstra(g *lib.Graph) *lib.Node {
 			n.ShortestPath = math.MaxFloat64
 		}
 		/*if minWeight < 0 {
-		for _, e := range n.Edges {
-			e.Weight -= minWeight
-		}
+			for _, e := range n.Edges {
+				e.Weight -= minWeight
+			}
 		}*/
 	}
 
-	q := g.Nodes
-	for len(q) > 0 {
+	for q := g.Nodes; len(q) > 0; {
 		var min *lib.Node
-		minI := 0
+		var minI int
 		for i, n := range q {
 			if min == nil || n.ShortestPath < min.ShortestPath {
 				min = n
@@ -36,31 +37,61 @@ func Dijkstra(g *lib.Graph) *lib.Node {
 			}
 		}
 		if min.Info["Type"] == "finish" {
-			return min
+			finish = min
+			break
 		}
 		q = append(q[:minI], q[minI+1:]...)
-
 		for _, e := range min.Edges {
-			for _, o := range q {
-				if e.Node == o {
-					if min.ShortestPath+e.Weight < e.ShortestPath {
-						e.ShortestPath = min.ShortestPath + e.Weight
-						e.ShortestParent = min
-					}
-					break
+			if min.ShortestPath+e.Weight < e.ShortestPath {
+				e.ShortestPath = min.ShortestPath + e.Weight
+				e.ShortestParent = min
+			}
+		}
+	}
+
+	/*for _, n := range g.Nodes {
+		for _, e := range n.Edges {
+			e.Weight += minWeight
+		}
+	}*/
+	return finish
+
+	/*	q := g.Nodes
+		for len(q) > 0 {
+			var min *lib.Node
+			minI := 0
+			for i, n := range q {
+				if min == nil || n.ShortestPath < min.ShortestPath {
+					min = n
+					minI = i
 				}
 			}
+			if min.Info["Type"] == "finish" {
+				return min
+			}
+			q = append(q[:minI], q[minI+1:]...)
 
-		}
-	}
+			for _, e := range min.Edges {
+				for _, o := range q {
+					if e.Node == o {
+						if min.ShortestPath+e.Weight < e.ShortestPath {
+							e.ShortestPath = min.ShortestPath + e.Weight
+							e.ShortestParent = min
+						}
+						break
+					}
+				}
 
-	var min *lib.Node
-	for _, n := range g.Nodes {
-		if n.Info["Type"] == "finish" && (min == nil || n.ShortestPath < min.ShortestPath) {
-			min = n
+			}
 		}
-	}
-	return min
+
+		var min *lib.Node
+		for _, n := range g.Nodes {
+			if n.Info["Type"] == "finish" && (min == nil || n.ShortestPath < min.ShortestPath) {
+				min = n
+			}
+		}
+		return min*/
 
 	/*var toGo []*lib.Node
 	toGo = append(toGo, start)

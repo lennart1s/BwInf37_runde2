@@ -119,7 +119,7 @@ func distance(n *lib.Node, o *lib.Node) float64 {
 }
 
 func finalWeight(n *lib.Node, y float64) float64 {
-	return -(y/busVel - distance(n, &lib.Node{Vertex: &lib.Vertex{0, y}})/lisaVel)
+	return -((y / busVel) - distance(n, &lib.Node{Vertex: &lib.Vertex{0, y}})/lisaVel)
 }
 
 func belongToSamePolygon(n *lib.Node, o *lib.Node) bool {

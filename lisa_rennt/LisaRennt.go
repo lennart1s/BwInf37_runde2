@@ -33,7 +33,7 @@ func main() {
 	Gc.Translate(rendering.BUSSTOP_RADIUS*1.5, -(float64(rendering.HEIGHT) - rendering.BUSSTOP_RADIUS*1.5))
 
 	// Read-File
-	Obstacles, Home = file.Read("./lisa_rennt/examples/lisarennt5.txt")
+	Obstacles, Home = file.Read("./lisa_rennt/examples/lisarennt2.txt")
 
 	rendering.RenderEnvironment(Gc)
 	rendering.RenderHome(Gc, Home)
@@ -42,7 +42,8 @@ func main() {
 	g := graph.Create(Home, Obstacles)
 	rendering.RenderGraph(Gc, &g)
 
-	finish := graph.Dijkstra(&g)
+	//finish := graph.Dijkstra(&g)
+	finish := graph.BellmanFord(&g)
 	rendering.RenderPath(Gc, &g, finish)
 
 	testData(&g, finish)
