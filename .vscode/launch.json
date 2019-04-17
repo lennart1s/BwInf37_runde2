@@ -9,7 +9,7 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${fileDirname}",
+            "program": "C:/Users/Lennart/goWorkspace/src/BwInf37_runde2/dreiecksbeziehungen/Dreiecksbeziehungen.go",
             "env": {},
             "args": []
         }
