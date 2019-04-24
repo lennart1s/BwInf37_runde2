@@ -34,6 +34,8 @@ func triangleFromLine(line string) *lib.Triangle {
 	triangle.Beta = beta
 	triangle.Gamma = gamma
 
+	triangle.ArrangeAntiClockwise()
+
 	return triangle
 }
 
