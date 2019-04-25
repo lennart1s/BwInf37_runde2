@@ -47,6 +47,18 @@ func horizontalAppendToTriangles(t *lib.Triangle, others []*lib.Triangle) {
 	}
 
 	t.Move(mostRight-mostLeft, 0)
+
+	if len(others) == 0 {
+		return
+	}
+
+	for dx := -20.0; dx < -0.1; {
+		t.Move(dx, 0)
+		if collidesWithOthers(t, others) {
+			t.Move(-dx, 0)
+			dx *= 0.5
+		}
+	}
 }
 
 func collidesWithOthers(t *lib.Triangle, others []*lib.Triangle) bool {
