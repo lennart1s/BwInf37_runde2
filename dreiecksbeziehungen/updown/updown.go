@@ -2,6 +2,7 @@ package updown
 
 import (
 	"BwInf37_runde2/dreiecksbeziehungen/lib"
+	"math"
 )
 
 func UpDown(triangles []*lib.Triangle) {
@@ -20,19 +21,42 @@ func UpDown(triangles []*lib.Triangle) {
 			t.Rotate(lib.Corner((angleIndex)%3), -a)
 
 			groundTriangle(t)
+			horizontalAppendToTriangles(t, triangles[:ti])
 		} else {
-
+			groundTriangle(t)
+			horizontalAppendToTriangles(t, triangles[:ti])
 		}
 	}
 
 }
 
 func horizontalAppendToTriangles(t *lib.Triangle, others []*lib.Triangle) {
+	mostRight := 0.0
+	mostLeft := math.MaxFloat64
+	for _, o := range others {
+		for _, c := range o.Corners() {
+			if c.X > mostRight {
+				mostRight = c.X
+			}
+		}
+	}
+	for _, c := range t.Corners() {
+		if c.X < mostLeft {
+			mostLeft = c.X
+		}
+	}
 
+	t.Move(mostRight-mostLeft, 0)
 }
 
-func collidesWithOthers(t *lib.Triangle, others []*lib.Triangle) {
+func collidesWithOthers(t *lib.Triangle, others []*lib.Triangle) bool {
+	for _, o := range others {
+		if t.Collides(o) {
+			return true
+		}
+	}
 
+	return false
 }
 
 func groundTriangle(t *lib.Triangle) {

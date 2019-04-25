@@ -27,10 +27,7 @@ func (t *Triangle) Rotate(rc Corner, angle float64) {
 	for _, c := range corners {
 		c.Add(translator)
 		c.Rotate(angle)
-		//fmt.Println(c.X)
 		c.Add(&backTransl)
-		//fmt.Println(backTransl.X, "+")
-		//fmt.Println("->", c.X)
 	}
 }
 
@@ -64,4 +61,29 @@ func (t *Triangle) Move(dx float64, dy float64) {
 	for _, c := range t.Corners() {
 		c.Add(&dv)
 	}
+}
+
+func (t *Triangle) Collides(o *Triangle) bool {
+	lines := triangleToLines(t)
+	oLines := triangleToLines(o)
+
+	for _, l := range lines {
+		for _, ol := range oLines {
+			if LineSegementIntersection(l, ol) {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
+func triangleToLines(t *Triangle) []*Line {
+	var lines []*Line
+	cs := t.Corners()
+	for ci, c := range cs {
+		lines = append(lines, &Line{A: *c, B: *cs[(ci+1)%3]})
+	}
+
+	return lines
 }
