@@ -18,14 +18,13 @@ func UpDown(triangles []*lib.Triangle) {
 
 		if ti%2 == 0 {
 			a := lib.AddVector(t.Corners()[(angleIndex+2)%3], lib.NegateVector(t.Corners()[(angleIndex+1)%3])).GetAngle(&lib.Vector{1, 0})
-			t.Rotate(lib.Corner((angleIndex)%3), -a)
-
-			groundTriangle(t)
-			horizontalAppendToTriangles(t, triangles[:ti])
+			t.Rotate(lib.Corner(angleIndex%3), -a)
 		} else {
-			groundTriangle(t)
-			horizontalAppendToTriangles(t, triangles[:ti])
+			a := lib.AddVector(t.Corners()[(angleIndex+2)%3], lib.NegateVector(t.Corners()[(angleIndex)%3])).GetAngle(&lib.Vector{1, 0})
+			t.Rotate(lib.Corner(angleIndex%3), (math.Pi/2+angle/2)-a)
 		}
+		groundTriangle(t)
+		horizontalAppendToTriangles(t, triangles[:ti])
 	}
 
 }

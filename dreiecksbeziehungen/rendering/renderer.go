@@ -13,12 +13,13 @@ import (
 )
 
 func RenderTriangles(triangles []*lib.Triangle, outputPath string) {
-	Img := image.NewRGBA(image.Rect(0, 0, 1200, 800))
+	w, h := getSize(triangles)
+	Img := image.NewRGBA(image.Rect(0, 0, w+20, h+20))
 	draw.Draw(Img, Img.Bounds(), &image.Uniform{color.RGBA{200, 200, 200, 255}}, image.ZP, draw.Src)
 	Gc := draw2dimg.NewGraphicContext(Img)
 	Gc.Scale(1, -1)
-	Gc.Translate(0, -800)
-	Gc.Translate(150, 150)
+	Gc.Translate(10, -(float64(h) + 10))
+	//Gc.Translate(150, 150)
 
 	Gc.SetFillColor(color.RGBA{110, 110, 110, 255})
 	Gc.SetStrokeColor(color.RGBA{40, 40, 40, 255})
@@ -35,6 +36,22 @@ func RenderTriangles(triangles []*lib.Triangle, outputPath string) {
 
 	f, _ := os.Create(outputPath)
 	png.Encode(f, Img)
+}
+
+func getSize(triangles []*lib.Triangle) (int, int) {
+	var w, h float64
+	for _, t := range triangles {
+		for _, c := range t.Corners() {
+			if c.X > w {
+				w = c.X
+			}
+			if c.Y > h {
+				h = c.Y
+			}
+		}
+	}
+
+	return int(w), int(h)
 }
 
 func CircleSmallestAngle(gc *draw2dimg.GraphicContext, triangles []*lib.Triangle) {
