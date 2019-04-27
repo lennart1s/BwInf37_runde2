@@ -53,6 +53,7 @@ func (t *Triangle) IsClockwise() bool {
 func (t *Triangle) ArrangeAntiClockwise() {
 	if t.IsClockwise() {
 		t.A, t.C = t.C, t.A
+		t.Alpha, t.Gamma = t.Gamma, t.Alpha
 	}
 }
 

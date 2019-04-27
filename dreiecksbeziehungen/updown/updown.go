@@ -2,11 +2,13 @@ package updown
 
 import (
 	"BwInf37_runde2/dreiecksbeziehungen/lib"
+	"fmt"
 	"math"
 )
 
 func UpDown(triangles []*lib.Triangle) {
-	for ti, t := range triangles {
+	sum := 0.0
+	for _, t := range triangles {
 		angle := -1.0
 		angleIndex := -1
 		for ai, a := range t.Angles() {
@@ -15,6 +17,21 @@ func UpDown(triangles []*lib.Triangle) {
 				angleIndex = ai
 			}
 		}
+		sum += angle
+	}
+	fmt.Println(lib.ToDegrees(sum))
+
+	for ti, t := range triangles {
+		angle := -1.0
+		angleIndex := -1
+		for ai, a := range t.Angles() {
+			if a < angle || angleIndex == -1 {
+				angle = a
+				angleIndex = ai
+			}
+			//fmt.Println(ai, a)
+		}
+		//fmt.Printf("-> %v: %v\n\n", angleIndex, angle)
 
 		if ti%2 == 0 {
 			a := lib.AddVector(t.Corners()[(angleIndex+2)%3], lib.NegateVector(t.Corners()[(angleIndex+1)%3])).GetAngle(&lib.Vector{1, 0})

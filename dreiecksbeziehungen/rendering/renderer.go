@@ -19,7 +19,6 @@ func RenderTriangles(triangles []*lib.Triangle, outputPath string) {
 	Gc := draw2dimg.NewGraphicContext(Img)
 	Gc.Scale(1, -1)
 	Gc.Translate(10, -(float64(h) + 10))
-	//Gc.Translate(150, 150)
 
 	Gc.SetFillColor(color.RGBA{110, 110, 110, 255})
 	Gc.SetStrokeColor(color.RGBA{40, 40, 40, 255})
@@ -56,10 +55,10 @@ func getSize(triangles []*lib.Triangle) (int, int) {
 
 func CircleSmallestAngle(gc *draw2dimg.GraphicContext, triangles []*lib.Triangle) {
 	for _, t := range triangles {
-		angle := 0.0
+		angle := -1.0
 		aIndex := -1
 		for ai, a := range t.Angles() {
-			if aIndex == -1 || a < angle {
+			if a < angle || aIndex == -1 {
 				angle = a
 				aIndex = ai
 			}
