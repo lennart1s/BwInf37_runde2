@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"strconv"
 )
 
 func main() {
@@ -16,11 +17,20 @@ func main() {
 
 	solution.Solve(triangles)
 
-	rendering.RenderTriangles(triangles, "./triOutput.png")
+	fmt.Printf("Datei:\t\t%v\n", args[0])
+	fmt.Printf("Gesamtabstand:\t%vm\n", int(getDistance(triangles)+0.5))
+	description := ""
+	for _, t := range triangles {
+		description += t.Info["ID"]
+		for ci, c := range t.Corners() {
+			description += " x" + strconv.Itoa(ci+1) + ":" + strconv.Itoa(int(c.X+0.5))
+			description += " y" + strconv.Itoa(ci+1) + ":" + strconv.Itoa(int(c.Y+0.5))
+		}
+		description += "\n"
+	}
+	fmt.Printf("x- und y-Koordinaten:\n%v", description)
 
-	fmt.Println("-------------")
-	fmt.Println(getDistance(triangles))
-	fmt.Println(eachGrounded(triangles))
+	rendering.RenderTriangles(triangles, "./dreiecksbeziehungen_solution.png")
 }
 
 func getDistance(triangles []*lib.Triangle) float64 {

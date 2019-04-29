@@ -11,8 +11,10 @@ func Load(path string) []*lib.Triangle {
 	var triangles []*lib.Triangle
 
 	lines := loadLines(path)
-	for _, line := range lines[1:] {
-		triangles = append(triangles, triangleFromLine(line))
+	for id, line := range lines[1:] {
+		t := triangleFromLine(line)
+		t.Info = map[string]string{"ID": "T" + strconv.Itoa(id)}
+		triangles = append(triangles, t)
 	}
 
 	return triangles

@@ -8,6 +8,8 @@ type Triangle struct {
 	Alpha float64
 	Beta  float64
 	Gamma float64
+
+	Info map[string]string
 }
 
 type Corner int
