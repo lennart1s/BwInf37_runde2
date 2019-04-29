@@ -19,7 +19,7 @@ func Create(home lib.Vertex, polygons []*lib.Polygon) lib.Graph {
 	}
 
 	g := lib.Graph{}
-	g.Nodes = append(g.Nodes, &lib.Node{Vertex: &lib.Vertex{X: home.X, Y: home.Y}, Info: map[string]string{"Type": "start"}})
+	g.Nodes = append(g.Nodes, &lib.Node{Vertex: &lib.Vertex{X: home.X, Y: home.Y}, Info: map[string]string{"Type": "start", "ID": "L"}})
 	g.Nodes = append(g.Nodes, verticesToNodes(polygons)...)
 
 	var endNodes []*lib.Node
@@ -49,7 +49,7 @@ func Create(home lib.Vertex, polygons []*lib.Polygon) lib.Graph {
 		}
 		// Check if can reach optimal busY
 		idealY := n.Y + math.Tan(idealAngle)*n.X
-		borderNode := lib.Node{Vertex: &lib.Vertex{X: 0, Y: idealY}, Info: map[string]string{"Type": "finish"}}
+		borderNode := lib.Node{Vertex: &lib.Vertex{X: 0, Y: idealY}, Info: map[string]string{"Type": "finish", "ID": "F"}}
 		if canReach(n, &borderNode, borders) {
 			n.Edges = append(n.Edges, &lib.Edge{Node: &borderNode, Weight: finalWeight(n, idealY)})
 			endNodes = append(endNodes, &borderNode)
@@ -165,7 +165,7 @@ func verticesToNodes(polygons []*lib.Polygon) []*lib.Node {
 	var nodes []*lib.Node
 	for ip, p := range polygons {
 		for iv, _ := range p.Vertices {
-			nodes = append(nodes, &lib.Node{Vertex: &polygons[ip].Vertices[iv], Info: map[string]string{"p": strconv.Itoa(ip), "v": strconv.Itoa(iv)}})
+			nodes = append(nodes, &lib.Node{Vertex: &polygons[ip].Vertices[iv], Info: map[string]string{"p": strconv.Itoa(ip), "v": strconv.Itoa(iv), "ID": "P" + strconv.Itoa(ip)}})
 		}
 	}
 
