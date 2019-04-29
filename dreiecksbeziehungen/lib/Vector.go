@@ -22,6 +22,21 @@ func (v *Vector) GetAngle(o *Vector) float64 {
 	return math.Acos(v.DotProduct(o) / (v.GetLength() * o.GetLength()))
 }
 
+func (v *Vector) GetAngleWithAxis() float64 {
+	if v.X == 0 && v.Y > 0 {
+		return math.Pi / 2
+	} else if v.X == 0 && v.Y < 0 {
+		return math.Pi * 1.5
+	}
+	a := math.Atan(v.Y / v.X)
+	if v.Y >= 0 && v.X < 0 {
+		a += math.Pi
+	} else if v.Y < 0 && v.X > 0 {
+		a += math.Pi * 2
+	}
+	return a
+}
+
 func (v *Vector) Negate() {
 	v.X = -v.X
 	v.Y = -v.Y

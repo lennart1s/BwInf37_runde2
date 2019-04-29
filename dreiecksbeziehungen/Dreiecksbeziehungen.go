@@ -4,28 +4,21 @@ import (
 	"BwInf37_runde2/dreiecksbeziehungen/files"
 	"BwInf37_runde2/dreiecksbeziehungen/lib"
 	"BwInf37_runde2/dreiecksbeziehungen/rendering"
-	"BwInf37_runde2/dreiecksbeziehungen/updown"
+	"BwInf37_runde2/dreiecksbeziehungen/solution"
 	"fmt"
 	"math"
+	"os"
 )
 
 func main() {
-	triangles := files.Load("./dreiecksbeziehungen/examples/dreiecke2.txt")
+	args := os.Args[1:]
+	triangles := files.Load(args[0])
 
-	updown.UpDown(triangles)
-
-	/*for _, t := range triangles {
-		found := false
-		for _, c := range t.Corners() {
-			if c.Y == 0 {
-				found = true
-			}
-		}
-		fmt.Println(found)
-	}*/
+	solution.Solve(triangles)
 
 	rendering.RenderTriangles(triangles, "./triOutput.png")
 
+	fmt.Println("-------------")
 	fmt.Println(getDistance(triangles))
 	fmt.Println(eachGrounded(triangles))
 }

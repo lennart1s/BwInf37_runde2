@@ -42,17 +42,16 @@ func (t *Triangle) Angles() []float64 {
 func (t *Triangle) IsClockwise() bool {
 	corners := t.Corners()
 	a := 0.0
-	for i := 0; i < len(corners)-1; i++ {
-		a += corners[i].X*corners[i+1].Y - corners[i+1].X*corners[i].Y
+	for i := 0; i < len(corners); i++ {
+		a += corners[i].X*corners[(i+1)%3].Y - corners[(i+1)%3].X*corners[i].Y
 	}
-	a *= 0.5
 
 	return a < 0
 }
 
 func (t *Triangle) ArrangeAntiClockwise() {
 	if t.IsClockwise() {
-		t.A, t.C = t.C, t.A
+		*t.A, *t.C = *t.C, *t.A
 		t.Alpha, t.Gamma = t.Gamma, t.Alpha
 	}
 }
