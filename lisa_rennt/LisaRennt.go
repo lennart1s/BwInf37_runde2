@@ -25,7 +25,8 @@ var (
 )
 
 func main() {
-	Obstacles, Home = file.Read("./lisa_rennt/examples/lisarennt1.txt")
+	args := os.Args[1:]
+	Obstacles, Home = file.Read(args[0])
 
 	g := graph.Create(Home, Obstacles)
 	//rendering.RenderGraph(Gc, &g)
@@ -45,6 +46,7 @@ func main() {
 	startDelay := busTime - neededTime
 	startTime := millisToTime(7.5*60*60*1000 + int(startDelay*1000))
 
+	fmt.Printf("Datei:\t\t%v\n\n", args[0])
 	fmt.Printf("Startzeit:\t%v\n", startTime)
 	fmt.Printf("Zielzeit:\t%v\n", millisToTime(7.5*60*60*1000+int(busTime)*1000))
 	fmt.Printf("y-Koordinate:\t%vm\n", int(finish.Y+0.5))
@@ -61,7 +63,8 @@ func main() {
 	rendering.RenderHome(Gc, Home)
 	rendering.RenderObstacles(Gc, Obstacles...)
 	rendering.RenderPath(Gc, &g, finish)
-	f, _ := os.Create("./lisa_rennt/save.png")
+
+	f, _ := os.Create("./lisa_rennt_path.png")
 	png.Encode(f, Img)
 }
 
