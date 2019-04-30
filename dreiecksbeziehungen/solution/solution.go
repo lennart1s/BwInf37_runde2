@@ -12,14 +12,12 @@ func Solve(triangles []*lib.Triangle) {
 		angleSum += t.Angles()[getSmallestAngleIndex(t)]
 	}
 
-	//for ti, t := range triangles {
 	for ti := 0; ti < len(triangles); ti++ {
 		t := triangles[ti]
 
 		prevAngle := 0.0
 		if ti == 0 {
 			prevAngle = math.Pi
-			//t.Rotate(lib.Corner(2), math.Pi)
 		} else {
 			a := getFurthestRightGroundedCorner(triangles[ti-1])
 			prevAngle = getSiteGroundAngle(triangles[ti-1].Corners()[a], triangles[ti-1].Corners()[(a+1)%3])
